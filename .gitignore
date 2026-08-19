@@ -1,0 +1,38 @@
+# Environment / secrets — NEVER commit these.
+# .env holds the JWT signing secret and database password.
+# Commit env.example instead, with placeholder values.
+.env
+.env.*
+!.env.example
+
+# Compiled binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+server
+
+# Test and coverage output
+*.test
+*.out
+coverage.*
+
+# Runtime logs
+logs/
+*.log
+
+# Dependency directory (only present if you run `go mod vendor`)
+vendor/
+
+# Editor / IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+*~
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
