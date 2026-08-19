@@ -194,12 +194,43 @@ Requires `Authorization: Bearer <access_token>`:
 
 ### Configuration
 
-`JWT_SECRET` is **required** — the server refuses to start without it. Generate a
-distinct secret per environment:
+`JWT_SECRET` is **required** — the server refuses to start without it, and there is
+no insecure default to fall back on.
+
+Generate one locally. Pick whichever command suits your shell:
 
 ```bash
+# Git Bash, macOS, Linux
 openssl rand -base64 48
 ```
+
+```powershell
+# Windows PowerShell (no openssl needed)
+$bytes = New-Object byte[] 48; [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes); [Convert]::ToBase64String($bytes)
+```
+
+```bash
+# Python
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+Paste the result into `.env` unquoted:
+
+```
+JWT_SECRET=XyPuyb4ie8KEDfCBrvSjY+0ZIXg8l72jYYdZq2B0FJls6req+i0ovMdarYjjzk4h
+```
+
+Three rules for this value:
+
+- **Generate it locally, never on a website.** This is a signing key: anyone who
+  knows it can forge a valid token for any user, including one with
+  `"role": "admin"`. A generator site cannot be audited and may log what it
+  hands you. If you dislike the command line, use a password manager's
+  random-password generator — it runs offline.
+- **Generate your own; do not share or reuse one.** A shared secret means a token
+  minted on one machine is accepted on every other. Dev and production must
+  never use the same value.
+- **Minimum 32 characters**, enforced at startup. The commands above produce 64.
 
 | Variable | Default | Purpose |
 |---|---|---|
