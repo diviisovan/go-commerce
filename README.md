@@ -56,8 +56,8 @@ ecommerce/
 
 ## Prerequisites
 
-- Go 1.16 or higher
-- MySQL 5.7 or higher
+- Go 1.25.5 or higher (see `go.mod`)
+- MySQL 5.7 or higher (tested on 8.0)
 - Git
 
 ## Setup Instructions
@@ -227,6 +227,17 @@ Both signup and login return:
   "user": { "id": 1, "email": "kiran@example.com", "role": "customer" }
 }
 ```
+
+### The sample users cannot log in
+
+`database/seed.go` creates four sample users (`john.doe@example.com` and
+friends) for the product and order examples. They were created before
+authentication existed, so they have **no password** and login will always
+return `401 invalid email or password`.
+
+This is intentional rather than a bug: an account with an empty password hash is
+rejected outright instead of being treated as "any password works". Sign up your
+own account to test the auth endpoints.
 
 Send the access token on protected requests:
 
