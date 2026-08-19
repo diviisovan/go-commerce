@@ -1,0 +1,1055 @@
+basePath: /api
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  models.AuthResponse:
+    description: Issued token pair plus the authenticated user
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+      expires_in:
+        example: 900
+        type: integer
+      refresh_token:
+        example: 3Qk9m1s...
+        type: string
+      token_type:
+        example: Bearer
+        type: string
+      user:
+        $ref: '#/definitions/models.UserResponse'
+    type: object
+  models.Cart:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/models.CartItem'
+        type: array
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.CartItem:
+    properties:
+      cart_id:
+        type: integer
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      product:
+        $ref: '#/definitions/models.Product'
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.ChangePasswordRequest:
+    description: Current and replacement password
+    properties:
+      current_password:
+        example: Str0ng!Passphrase
+        maxLength: 72
+        type: string
+      new_password:
+        example: Even!Str0nger1
+        maxLength: 72
+        minLength: 8
+        type: string
+    required:
+    - current_password
+    - new_password
+    type: object
+  models.ErrorResponse:
+    description: Generic error message
+    properties:
+      error:
+        example: invalid email or password
+        type: string
+    type: object
+  models.LoginRequest:
+    description: Credentials used to obtain a token pair
+    properties:
+      email:
+        example: kiran@example.com
+        maxLength: 191
+        type: string
+      password:
+        example: Str0ng!Passphrase
+        maxLength: 72
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.MessageResponse:
+    description: Generic success message
+    properties:
+      message:
+        example: operation completed successfully
+        type: string
+    type: object
+  models.Order:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/models.OrderItem'
+        type: array
+      shipping_cost:
+        type: number
+      status:
+        $ref: '#/definitions/models.OrderStatus'
+      total_amount:
+        type: number
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
+  models.OrderItem:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      order_id:
+        type: integer
+      price:
+        description: Price at time of order
+        type: number
+      product:
+        $ref: '#/definitions/models.Product'
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.OrderStatus:
+    enum:
+    - Pending
+    - Confirmed
+    - Shipped
+    - Delivered
+    - Cancelled
+    type: string
+    x-enum-varnames:
+    - OrderStatusPending
+    - OrderStatusConfirmed
+    - OrderStatusShipped
+    - OrderStatusDelivered
+    - OrderStatusCancelled
+  models.Product:
+    description: Product information
+    properties:
+      category:
+        example: Electronics
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        example: High-performance laptop
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Laptop
+        type: string
+      price:
+        example: 999.99
+        type: number
+      stock:
+        example: 10
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.RefreshRequest:
+    description: A previously issued refresh token
+    properties:
+      refresh_token:
+        example: v2.V0hFTiBJTiBET1VCVCwgcmVhZCB0aGUgZG9jcw
+        type: string
+    required:
+    - refresh_token
+    type: object
+  models.SignupRequest:
+    description: New account registration details
+    properties:
+      address:
+        example: 123 MG Road, Bengaluru
+        maxLength: 1000
+        type: string
+      email:
+        example: kiran@example.com
+        maxLength: 191
+        type: string
+      name:
+        example: Kiran Kumar
+        maxLength: 255
+        minLength: 2
+        type: string
+      password:
+        example: Str0ng!Passphrase
+        maxLength: 72
+        minLength: 8
+        type: string
+      phone:
+        example: +91-9876543210
+        maxLength: 50
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  models.User:
+    description: User account information
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        example: kiran@example.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      is_active:
+        type: boolean
+      last_login_at:
+        type: string
+      name:
+        example: Kiran Kumar
+        type: string
+      phone:
+        type: string
+      role:
+        description: Role drives authorization checks in middleware.RequireRole.
+        example: customer
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.UserResponse:
+    description: Public user profile
+    properties:
+      address:
+        example: 123 MG Road, Bengaluru
+        type: string
+      created_at:
+        type: string
+      email:
+        example: kiran@example.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      is_active:
+        example: true
+        type: boolean
+      last_login_at:
+        type: string
+      name:
+        example: Kiran Kumar
+        type: string
+      phone:
+        example: +91-9876543210
+        type: string
+      role:
+        example: customer
+        type: string
+    type: object
+host: localhost:4444
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+    url: http://www.example.com/support
+  description: A comprehensive eCommerce system API with product management, shopping
+    cart, and order processing
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: eCommerce API
+  version: "1.0"
+paths:
+  /auth/change-password:
+    post:
+      consumes:
+      - application/json
+      description: Requires the current password. On success every other session is
+        signed out.
+      parameters:
+      - description: Current and new password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.MessageResponse'
+        "400":
+          description: Validation or password policy failure
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Current password incorrect
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Change the password
+      tags:
+      - auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Verifies credentials and returns an access/refresh token pair.
+        Repeated failures lock the account temporarily.
+      parameters:
+      - description: Credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Invalid email or password
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Account inactive
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "429":
+          description: Account locked or rate limited
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Log in
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: 'Revokes the supplied refresh token. Idempotent: an unknown token
+        also returns success. The access token remains valid until it expires, so
+        clients should discard it.'
+      parameters:
+      - description: Refresh token to revoke
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Log out of this session
+      tags:
+      - auth
+  /auth/logout-all:
+    post:
+      consumes:
+      - application/json
+      description: Revokes every refresh token belonging to the authenticated user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.MessageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Log out everywhere
+      tags:
+      - auth
+  /auth/me:
+    get:
+      consumes:
+      - application/json
+      description: Returns the profile of the authenticated user. The identity comes
+        from the token, never from a request parameter.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get the current user
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Exchanges a refresh token for a new pair. The old refresh token
+        is invalidated on use, so always store the one returned here.
+      parameters:
+      - description: Refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Invalid, expired or already-used refresh token
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Refresh the access token
+      tags:
+      - auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Creates a customer account and returns an access/refresh token
+        pair. Passwords must be at least 8 characters, contain a letter plus a number
+        or symbol, and must not echo your name or email.
+      parameters:
+      - description: Registration details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignupRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "400":
+          description: Validation or password policy failure
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "409":
+          description: Email already registered
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "429":
+          description: Too many requests
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Register a new account
+      tags:
+      - auth
+  /carts/{cart_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a shopping cart with all its items
+      parameters:
+      - description: Cart ID
+        in: path
+        name: cart_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Cart'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get cart by ID
+      tags:
+      - carts
+  /carts/{cart_id}/items:
+    post:
+      consumes:
+      - application/json
+      description: Add a product to the shopping cart
+      parameters:
+      - description: Cart ID
+        in: path
+        name: cart_id
+        required: true
+        type: integer
+      - description: Item information
+        in: body
+        name: item
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.CartItem'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.CartItem'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Add item to cart
+      tags:
+      - carts
+  /carts/{cart_id}/items/{item_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove an item from the shopping cart
+      parameters:
+      - description: Cart ID
+        in: path
+        name: cart_id
+        required: true
+        type: integer
+      - description: Item ID
+        in: path
+        name: item_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Remove item from cart
+      tags:
+      - carts
+  /carts/user/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve an existing cart or create a new one for the specified
+        user
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Cart'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get or create a cart for a user
+      tags:
+      - carts
+  /orders:
+    post:
+      consumes:
+      - application/json
+      description: Create an order from a shopping cart and process payment
+      parameters:
+      - description: Order information
+        in: body
+        name: order
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new order
+      tags:
+      - orders
+  /orders/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve detailed information about a specific order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Order'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get order by ID
+      tags:
+      - orders
+  /orders/{id}/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Cancel an order and restore inventory
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cancel an order
+      tags:
+      - orders
+  /orders/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: Update the status of an order (Pending, Confirmed, Shipped, Delivered,
+        Cancelled)
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Status update
+        in: body
+        name: status
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update order status
+      tags:
+      - orders
+  /orders/user/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all orders for a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Order'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get orders by user
+      tags:
+      - orders
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all products in the catalog
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Product'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all products
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Create a new product in the catalog
+      parameters:
+      - description: Product information
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new product
+      tags:
+      - products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a product from the catalog
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a product
+      tags:
+      - products
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information about a specific product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Product'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a product by ID
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Update product information
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated product information
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a product
+      tags:
+      - products
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    description: 'Paste your access token here as: Bearer <token>'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
